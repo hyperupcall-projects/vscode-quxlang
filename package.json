@@ -1,7 +1,7 @@
 {
   "name": "unofficial-quxlang",
-  "displayName": "Unofficial Quxlang",
-  "description": "Unofficial syntax highlighting for the Quxlang systems programming language (.qxs)",
+  "displayName": "Quxlang (Unofficial)",
+  "description": "Syntax highlighting for Quxlang.",
   "version": "0.2.0",
   "publisher": "EdwinKofler",
   "license": "MIT",
@@ -11,6 +11,10 @@
     "theme": "dark"
   },
   "homepage": "https://quxlang.dev/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hyperupcall-projects/vscode-quxlang.git"
+  },
   "qna": "false",
   "engines": {
     "vscode": "^1.75.0"
