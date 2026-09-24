@@ -56,7 +56,7 @@ console.log(`Testing ${pkg.displayName} ${pkg.version}...`);
 run(process.execPath, [join(root, "scripts", "test-highlighting.mjs")]);
 
 console.log(`Packaging ${vsixName}...`);
-run(vsce, ["package", "--no-dependencies", "--allow-star-activation", "--allow-missing-repository"]);
+run(vsce, ["package", "--no-dependencies", "--allow-missing-repository"]);
 
 const vsix = join(root, vsixName);
 if (!existsSync(vsix)) {
@@ -76,7 +76,7 @@ if (wantMarketplace) {
     process.exit(1);
   }
   console.log("Publishing to the Visual Studio Marketplace...");
-  run(vsce, ["publish", "--no-dependencies", "--allow-star-activation", "--allow-missing-repository", "--pat", process.env.VSCE_PAT]);
+  run(vsce, ["publish", "--no-dependencies", "--allow-missing-repository", "--pat", process.env.VSCE_PAT]);
 }
 
 if (wantOvsx) {

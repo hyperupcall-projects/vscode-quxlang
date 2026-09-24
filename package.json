@@ -19,6 +19,9 @@
   "engines": {
     "vscode": "^1.75.0"
   },
+  "activationEvents": [
+    "onLanguage:quxlang"
+  ],
   "categories": [
     "Programming Languages"
   ],
@@ -32,8 +35,8 @@
   ],
   "scripts": {
     "test": "node scripts/test-highlighting.mjs",
-    "package": "vsce package --no-dependencies --allow-star-activation --allow-missing-repository",
-    "publish:marketplace": "vsce publish --no-dependencies --allow-star-activation --allow-missing-repository",
+    "package": "vsce package --no-dependencies --allow-missing-repository",
+    "publish:marketplace": "vsce publish --no-dependencies --allow-missing-repository",
     "publish:ovsx": "ovsx publish --packagePath ./unofficial-quxlang-0.1.0.vsix",
     "publish:all": "node scripts/publish.mjs",
     "vscode:prepublish": "node scripts/test-highlighting.mjs"
