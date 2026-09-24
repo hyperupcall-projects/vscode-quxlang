@@ -1,0 +1,78 @@
+{
+  "name": "unofficial-quxlang",
+  "displayName": "Unofficial Quxlang",
+  "description": "Unofficial syntax highlighting for the Quxlang systems programming language (.qxs)",
+  "version": "0.2.0",
+  "publisher": "EdwinKofler",
+  "license": "MIT",
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#1b2430",
+    "theme": "dark"
+  },
+  "homepage": "https://quxlang.dev/",
+  "qna": "false",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "quxlang",
+    "qxc",
+    "qxs",
+    "syntax",
+    "highlighting",
+    "unofficial"
+  ],
+  "scripts": {
+    "test": "node scripts/test-highlighting.mjs",
+    "package": "vsce package --no-dependencies --allow-star-activation --allow-missing-repository",
+    "publish:marketplace": "vsce publish --no-dependencies --allow-star-activation --allow-missing-repository",
+    "publish:ovsx": "ovsx publish --packagePath ./unofficial-quxlang-0.1.0.vsix",
+    "publish:all": "node scripts/publish.mjs",
+    "vscode:prepublish": "node scripts/test-highlighting.mjs"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.6.0",
+    "ovsx": "^0.10.5",
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.2.0"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "quxlang",
+        "aliases": [
+          "Unofficial Quxlang",
+          "Quxlang",
+          "quxlang"
+        ],
+        "extensions": [
+          ".qxs"
+        ],
+        "firstLine": "^\\s*LANGUAGE\\s+QUXLANG\\b",
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icon.png",
+          "dark": "./icon.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "quxlang",
+        "scopeName": "source.quxlang",
+        "path": "./syntaxes/quxlang.tmLanguage.json"
+      }
+    ],
+    "configurationDefaults": {
+      "[quxlang]": {
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.wordSeparators": "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?"
+      }
+    }
+  }
+}

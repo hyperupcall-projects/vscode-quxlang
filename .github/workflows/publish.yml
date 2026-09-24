@@ -1,0 +1,28 @@
+name: Publish Unofficial Quxlang
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci
+      - run: npm test
+      - run: npm run package
+      - name: Publish to Visual Studio Marketplace
+        if: ${{ secrets.VSCE_PAT != '' }}
+        run: npx vsce publish --no-dependencies --allow-missing-repository --pat "${{ secrets.VSCE_PAT }}"
+      - name: Publish to Open VSX
+        if: ${{ secrets.OVSX_PAT != '' }}
+        run: npx ovsx publish --packagePath ./unofficial-quxlang-*.vsix --pat "${{ secrets.OVSX_PAT }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unofficial-quxlang-vsix
+          path: unofficial-quxlang-*.vsix

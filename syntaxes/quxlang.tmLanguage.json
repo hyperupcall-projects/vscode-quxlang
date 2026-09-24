@@ -1,0 +1,467 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Quxlang",
+  "scopeName": "source.quxlang",
+  "fileTypes": ["qxs"],
+  "patterns": [
+    { "include": "#language-header" },
+    { "include": "#statements" }
+  ],
+  "repository": {
+    "statements": {
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#doc-block" },
+        { "include": "#asm-procedure" },
+        { "include": "#strings" },
+        { "include": "#numbers" },
+        { "include": "#labels" },
+        { "include": "#declaration-names" },
+        { "include": "#scoped-names" },
+        { "include": "#members" },
+        { "include": "#parameters" },
+        { "include": "#keywords" },
+        { "include": "#calls" },
+        { "include": "#identifiers" },
+        { "include": "#operators" },
+        { "include": "#punctuation" }
+      ]
+    },
+
+    "language-header": {
+      "match": "^\\s*(LANGUAGE)\\s+(QUXLANG)\\s+([A-Z]+)\\s+([0-9]+(?:\\.[0-9]+)*)\\s*(;)",
+      "name": "meta.preprocessor.language-header.quxlang",
+      "captures": {
+        "1": { "name": "keyword.control.directive.language.quxlang" },
+        "2": { "name": "entity.name.type.language.quxlang" },
+        "3": { "name": "constant.language.locale.quxlang" },
+        "4": { "name": "constant.numeric.version.quxlang" },
+        "5": { "name": "punctuation.terminator.statement.quxlang" }
+      }
+    },
+
+    "comments": {
+      "patterns": [
+        {
+          "begin": "//",
+          "beginCaptures": { "0": { "name": "punctuation.definition.comment.quxlang" } },
+          "end": "$",
+          "name": "comment.line.double-slash.quxlang",
+          "patterns": [
+            { "match": "\\b(TODO|FIXME|XXX|HACK|NOTE)\\b", "name": "keyword.todo.quxlang" }
+          ]
+        }
+      ]
+    },
+
+    "doc-block": {
+      "begin": "(?:\\b(DOC)\\s*)?(<\\$)",
+      "beginCaptures": {
+        "1": { "name": "storage.modifier.doc.quxlang" },
+        "2": { "name": "punctuation.definition.comment.begin.documentation.quxlang" }
+      },
+      "end": "\\$>",
+      "endCaptures": { "0": { "name": "punctuation.definition.comment.end.documentation.quxlang" } },
+      "name": "comment.block.documentation.quxlang"
+    },
+
+    "strings": {
+      "patterns": [
+        {
+          "begin": "\"",
+          "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.quxlang" } },
+          "end": "\"",
+          "endCaptures": { "0": { "name": "punctuation.definition.string.end.quxlang" } },
+          "name": "string.quoted.double.quxlang",
+          "patterns": [
+            { "match": "\\\\[ntr0\\\\\"]", "name": "constant.character.escape.quxlang" },
+            { "match": "\\\\.", "name": "invalid.illegal.escape.quxlang" }
+          ]
+        },
+        {
+          "match": "(')(?:(\\\\[ntr0\\\\'])|([^\\\\']))(')",
+          "name": "string.quoted.single.quxlang",
+          "captures": {
+            "1": { "name": "punctuation.definition.string.begin.quxlang" },
+            "2": { "name": "constant.character.escape.quxlang" },
+            "3": { "name": "constant.character.quxlang" },
+            "4": { "name": "punctuation.definition.string.end.quxlang" }
+          }
+        }
+      ]
+    },
+
+    "numbers": {
+      "match": "\\b[0-9]+(?:\\.[0-9]+)?\\b",
+      "name": "constant.numeric.decimal.quxlang"
+    },
+
+    "labels": {
+      "patterns": [
+        {
+          "match": "\\b(GOTO|BREAK|CONTINUE|LABEL)\\s+(:)([a-z](?:[a-z0-9_]*[a-z0-9])?)",
+          "captures": {
+            "1": { "name": "keyword.control.flow.quxlang" },
+            "2": { "name": "punctuation.definition.label.quxlang" },
+            "3": { "name": "entity.name.label.quxlang" }
+          }
+        }
+      ]
+    },
+
+    "declaration-names": {
+      "patterns": [
+        {
+          "comment": "Declaration whose first declaration-kind keyword on the same line is type-like.",
+          "match": "^\\s*(::|\\.)([a-z](?:[a-z0-9_]*[a-z0-9])?)(?=(?:(?!\\b(?:STRUCT|CLASS|ENUM|FLAGSET|INLINE_UNION|INLINE_VARIANT|UNION|VARIANT|INTERFACE|GENERIC|EXTERN_TYPE|ALIAS|NAMESPACE|FUNCTION|PROCEDURE|EXTERN_PROCEDURE|ASM_PROCEDURE|ASM_INLINE_FUNCTION|STATIC_TEST|UNIT_TEST|DUAL_TEST|VAR|STATIC|STATIC_VAR|PER_THREAD|OPTION)\\b)[^;{])*\\b(?:STRUCT|CLASS|ENUM|FLAGSET|INLINE_UNION|INLINE_VARIANT|UNION|VARIANT|INTERFACE|GENERIC|EXTERN_TYPE|ALIAS)\\b)",
+          "captures": {
+            "1": { "name": "punctuation.accessor.declaration.quxlang" },
+            "2": { "name": "entity.name.type.quxlang" }
+          }
+        },
+        {
+          "match": "^\\s*(::)([a-z](?:[a-z0-9_]*[a-z0-9])?)(?=(?:(?!\\b(?:STRUCT|CLASS|ENUM|FLAGSET|INLINE_UNION|INLINE_VARIANT|UNION|VARIANT|INTERFACE|GENERIC|EXTERN_TYPE|ALIAS|NAMESPACE|FUNCTION|PROCEDURE|EXTERN_PROCEDURE|ASM_PROCEDURE|ASM_INLINE_FUNCTION|STATIC_TEST|UNIT_TEST|DUAL_TEST|VAR|STATIC|STATIC_VAR|PER_THREAD|OPTION)\\b)[^;{])*\\bNAMESPACE\\b)",
+          "captures": {
+            "1": { "name": "punctuation.accessor.declaration.quxlang" },
+            "2": { "name": "entity.name.namespace.quxlang" }
+          }
+        },
+        {
+          "comment": "Declaration whose first declaration-kind keyword on the same line is a variable.",
+          "match": "^\\s*(::|\\.)([a-z](?:[a-z0-9_]*[a-z0-9])?)(?=(?:(?!\\b(?:STRUCT|CLASS|ENUM|FLAGSET|INLINE_UNION|INLINE_VARIANT|UNION|VARIANT|INTERFACE|GENERIC|EXTERN_TYPE|ALIAS|NAMESPACE|FUNCTION|PROCEDURE|EXTERN_PROCEDURE|ASM_PROCEDURE|ASM_INLINE_FUNCTION|STATIC_TEST|UNIT_TEST|DUAL_TEST|VAR|STATIC|STATIC_VAR|PER_THREAD|OPTION)\\b)[^;{])*\\b(?:VAR|STATIC|STATIC_VAR|PER_THREAD|OPTION)\\b)",
+          "captures": {
+            "1": { "name": "punctuation.accessor.declaration.quxlang" },
+            "2": { "name": "variable.other.declaration.quxlang" }
+          }
+        },
+        {
+          "comment": "Any other declaration that begins a line, including declarations whose kind is on a later line.",
+          "match": "^\\s*(::)([a-z](?:[a-z0-9_]*[a-z0-9])?)\\b",
+          "captures": {
+            "1": { "name": "punctuation.accessor.declaration.quxlang" },
+            "2": { "name": "entity.name.function.quxlang" }
+          }
+        },
+        {
+          "match": "^\\s*(\\.)([a-z](?:[a-z0-9_]*[a-z0-9])?)(?=\\s+(?:INCLUDE_IF|DOC|PRIVATE|PUBLIC|VAR|STATIC|BASE|VIRTUAL_BASE|POLYMORPHIC_BASE|OPTION|[IU][0-9]+\\b|F[0-9]+|BOOL|BYTE|SZ|MUT|CONST|->|=>>|~>|\\[))",
+          "captures": {
+            "1": { "name": "punctuation.accessor.declaration.quxlang" },
+            "2": { "name": "variable.other.member.declaration.quxlang" }
+          }
+        }
+      ]
+    },
+
+    "scoped-names": {
+      "patterns": [
+        {
+          "match": "\\b([a-z](?:[a-z0-9_]*[a-z0-9])?)(?=::)",
+          "name": "entity.name.namespace.quxlang"
+        },
+        {
+          "match": "(::)([a-z](?:[a-z0-9_]*[a-z0-9])?)(?=\\s*[(#])",
+          "captures": {
+            "1": { "name": "punctuation.accessor.scope.quxlang" },
+            "2": { "name": "entity.name.function.quxlang" }
+          }
+        },
+        {
+          "match": "(::)([a-z](?:[a-z0-9_]*[a-z0-9])?)",
+          "captures": {
+            "1": { "name": "punctuation.accessor.scope.quxlang" },
+            "2": { "name": "entity.name.quxlang" }
+          }
+        }
+      ]
+    },
+
+    "members": {
+      "patterns": [
+        {
+          "match": "(\\.)([a-z](?:[a-z0-9_]*[a-z0-9])?)(?=\\s*[(#])",
+          "captures": {
+            "1": { "name": "punctuation.accessor.member.quxlang" },
+            "2": { "name": "entity.name.function.member.quxlang" }
+          }
+        },
+        {
+          "match": "(\\.)([a-z](?:[a-z0-9_]*[a-z0-9])?)",
+          "captures": {
+            "1": { "name": "punctuation.accessor.member.quxlang" },
+            "2": { "name": "variable.other.member.quxlang" }
+          }
+        },
+        {
+          "match": "(\\.)([A-Z][A-Z0-9_]*)\\b",
+          "captures": {
+            "1": { "name": "punctuation.accessor.member.quxlang" },
+            "2": { "name": "support.function.special-member.quxlang" }
+          }
+        }
+      ]
+    },
+
+    "parameters": {
+      "patterns": [
+        {
+          "comment": "Named argument or parameter: @name, @ARG, @ARG:binding, @KWARGS.",
+          "match": "(@)([A-Za-z_][A-Za-z0-9_]*)(?:(:)([a-z](?:[a-z0-9_]*[a-z0-9])?))?",
+          "captures": {
+            "1": { "name": "punctuation.definition.parameter.quxlang" },
+            "2": { "name": "variable.parameter.quxlang" },
+            "3": { "name": "punctuation.separator.binding.quxlang" },
+            "4": { "name": "variable.parameter.binding.quxlang" }
+          }
+        },
+        {
+          "comment": "Positional parameter declaration: %name, %...pack.",
+          "match": "(%)(\\.\\.\\.)?([a-z](?:[a-z0-9_]*[a-z0-9])?)",
+          "captures": {
+            "1": { "name": "punctuation.definition.parameter.quxlang" },
+            "2": { "name": "keyword.operator.variadic.quxlang" },
+            "3": { "name": "variable.parameter.quxlang" }
+          }
+        }
+      ]
+    },
+
+    "keywords": {
+      "patterns": [
+        {
+          "match": "\\b(?:IF|ELSE|UNLESS|LOOP|WHILE|FOR|DO|FROM|UNTIL|TO|STEP|BY|LIMIT|WHERE|ITER|ITEM|IN|FILTER|POSTTEST|BREAK|CONTINUE|GOTO|LABEL|RETURN|RETURN_UNEQUAL|MATCH|VISIT|CASE|OTHERWISE|TRY|CATCH|THROW|RETHROW|THROW_EXCEPTION_PTR|DEFER|STATIC_IF|STATIC_ELSE|STATIC_WHILE|STATIC_CHOOSE|STATIC_EVAL|RUNTIME|NATIVE|INIT|EVAL)\\b",
+          "name": "keyword.control.quxlang"
+        },
+        {
+          "match": "\\b(?:PANIC|UNIMPLEMENTED|COMPILATION_ERROR)\\b",
+          "name": "keyword.control.diagnostic.quxlang"
+        },
+        {
+          "match": "\\b(?:IMPORT|IMPORT_IF|LANGUAGE)\\b",
+          "name": "keyword.control.import.quxlang"
+        },
+        {
+          "match": "\\b(?:FUNCTION|STRUCT|CLASS|TEMPLATE|NAMESPACE|ENUM|FLAGSET|INLINE_UNION|INLINE_VARIANT|UNION|VARIANT|INTERFACE|GENERIC|IMPLEMENTATION|IMPLEMENTS|ALIAS|EXTERN_PROCEDURE|EXTERN_TYPE|ASM_PROCEDURE|ASM_INLINE_FUNCTION|CALLABLE|PROCEDURE|LAMBDA|STATIC_TEST|UNIT_TEST|DUAL_TEST|CONSTRUCTOR|FULLOBJECT_CONSTRUCTOR|SUBOBJECT_CONSTRUCTOR|DESTRUCTOR|DEINITIALIZER|OPERATOR|IBC_STRUCT|IBC_ENUM)\\b",
+          "name": "storage.type.quxlang"
+        },
+        {
+          "match": "\\b(?:VAR|STATIC|STATIC_VAR|PER_THREAD|OPTION|BASE|VIRTUAL_BASE|POLYMORPHIC_BASE)\\b",
+          "name": "storage.type.variable.quxlang"
+        },
+        {
+          "match": "\\b(?:MUT|CONST|TEMP|WRITE|OUTPUT_ITERATOR|INPUT_ITERATOR|VIRTUAL|NONVIRTUAL|OVERRIDE|FINAL|NOEXCEPT|CONSTEXPR|CONSTEXPR_OK|PRIVATE|PUBLIC|MODULE|EXPLICIT|DEFAULT|DEFAULTED|DEFAULTABLE|DEFAULT_FROM|DEFAULT_VALUE|OPTIONAL|CALLCONV|CCALL|STDCALL|CLOBBER|INCLUDE_IF|ENABLE_IF|KNOWN_BROKEN|KNOWN_BROKEN_IF|KNOWN_FAILING|KNOWN_FAILING_IF|EXPECT_FAIL|EXPECT_COMPILATION_FAILURE|DOC|IGNORED|PARTIAL|PURE|LIKELY|UNLIKELY|MOVE_ONLY|ROOTED|NOT_COPYABLE|NO_IMPLICIT_DEFAULT_CONSTRUCTOR|NO_IMPLICIT_CONSTRUCTORS|NO_IMPLICIT_ASSIGNMENT|NO_IMPLICIT_COPY|ANTESTATAL|TRIVIALLY_RELOCATABLE|TRIVIALLY_RELOCATABLE_IF|SERIALOID|NONSTATIC|STRINGLIKE|NEVER_VALUELESS|VALUELESS_DEFAULT|NO_DEFAULT_COPY|NO_DEFAULT_MOVE|NO_DEFAULT_ASSIGN|NO_DEFAULT_SWAP|POLYMORPHIC|VIRTUAL_POLYMORPHIC|JVM_VIRTUAL|JVM_STATIC|JVM_INTERFACE|JVM_CONSTRUCTOR)\\b",
+          "name": "storage.modifier.quxlang"
+        },
+        {
+          "match": "\\b(?:AS|ISA|IS|NEW|DELETE|PLACE|AT|PUN|DESTROY|APPLY|MOVE|FORWARD|SNAPSHOT|INTO|CHECKED|UNCHECKED_STATIC_DOWNCAST|DYNAMIC|REINTERPRET|APPROXIMATE|DECAY|AND|OR|TO)\\b",
+          "name": "keyword.operator.word.quxlang"
+        },
+        {
+          "match": "\\b(?:[IU][0-9]+|F[0-9]+(?:E[0-9]+)?)\\b",
+          "name": "support.type.primitive.quxlang"
+        },
+        {
+          "match": "\\b(?:BOOL|BYTE|VOID|SZ|UINTPTR|ADDRESS|AUTO|STRING|STRING_CONSTANT|CSTRING_CONSTANT|DATA_CONSTANT|NUMERIC_CONSTANT|NUMBER|NULL_TYPE|TYPE|THISTYPE|EXCEPTION_PTR|TYPED_STORAGE|ALIGNED_STORAGE|VIRTUAL_STORAGE|ATOMIC|STRING_LITERAL_TYPE|NUMERIC_LITERAL_TYPE|STRING_LITERAL_ANY|NUMERIC_LITERAL_ANY|UINTANY|GENERIC_REF|GENERIC_THIS|GENERIC_OTHER|VALUE)\\b",
+          "name": "support.type.builtin.quxlang"
+        },
+        {
+          "match": "\\b(?:TRUE|FALSE|NULL)\\b",
+          "name": "constant.language.quxlang"
+        },
+        {
+          "match": "\\b(?:THIS|ARG|OTHER|KWARGS|LHS|RHS|CURRENT_EXCEPTION)\\b",
+          "name": "variable.language.quxlang"
+        },
+        {
+          "match": "\\b(?:(?:OS|ARCH_IS|ENVIRONMENT_IS|KERNEL|BACKEND|BINARY|UNWIND_FORMAT_IS)_[A-Z0-9_]+|(?:X64|X86|ARM64|ARM32|Z_ARCH)_(?:FEATURE|FEATURES|VENDOR|PERF)_[A-Z0-9_]+|HAVE_[A-Z0-9_]+|DETECT_[A-Z0-9_]+|ATOMIC_(?:RELAXED|ACQUIRE|RELEASE|ACQREL|SEQCST)|X64|X86|ARM64|ARM32|Z_ARCH|JVM)\\b",
+          "name": "constant.language.target.quxlang"
+        },
+        {
+          "match": "\\b(?:ASSERT|TEST_ASSERT|TEST_EXPECT|ASSUME)\\b",
+          "name": "support.function.assert.quxlang"
+        },
+        {
+          "comment": "Any other uppercase word immediately used like a call or template is a compiler intrinsic.",
+          "match": "\\b[A-Z][A-Z0-9_]*(?=\\s*[(#])",
+          "name": "support.function.builtin.quxlang"
+        },
+        {
+          "comment": "Every uppercase word is reserved for the language or compiler.",
+          "match": "\\b_*[A-Z][A-Z0-9_]*\\b",
+          "name": "keyword.other.quxlang"
+        }
+      ]
+    },
+
+    "calls": {
+      "match": "\\b([a-z](?:[a-z0-9_]*[a-z0-9])?)(?=\\s*[(#])",
+      "name": "entity.name.function.call.quxlang"
+    },
+
+    "identifiers": {
+      "patterns": [
+        { "match": "\\b[a-z](?:[a-z0-9_]*[a-z0-9])?\\b", "name": "variable.other.quxlang" },
+        {
+          "comment": "Mixed case is neither a user identifier nor a keyword.",
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b",
+          "name": "invalid.illegal.identifier.quxlang"
+        }
+      ]
+    },
+
+    "operators": {
+      "patterns": [
+        {
+          "match": "\\.\\.\\.",
+          "name": "keyword.operator.variadic.quxlang"
+        },
+        {
+          "comment": "Overflow-checked arithmetic, e.g. +?, *?, #++?, +=?.",
+          "match": "(?:#(?:\\+\\+|--|\\+%|-%)|[-+*/%^])=?\\?(?!\\?)",
+          "name": "keyword.operator.arithmetic.checked.quxlang"
+        },
+        {
+          "comment": "Assignment, compound assignment, and swap.",
+          "match": ":=|<->|(?:#(?:&&|!&|\\^\\^|!\\||\\|\\||\\^>|\\^<|!\\^|\\+\\+|--|\\+%|-%)|&&|!&|\\^\\^|!\\||\\|\\||\\^>|\\^<|!\\^|[-+*/%^])=",
+          "name": "keyword.operator.assignment.quxlang"
+        },
+        {
+          "match": "#(?:&&|!&|\\^\\^|!\\||\\|\\||\\^>|\\^<|!\\^|\\+\\+|--|\\+%|-%|!!)",
+          "name": "keyword.operator.bitwise.quxlang"
+        },
+        {
+          "match": "<=>|==|!=|<=|>=",
+          "name": "keyword.operator.comparison.quxlang"
+        },
+        {
+          "match": "&&|\\|\\||\\^\\^|\\^>|\\^<|!\\^|!&|!\\|",
+          "name": "keyword.operator.logical.quxlang"
+        },
+        {
+          "comment": "Pointer, reference, and address forms.",
+          "match": "=>>|->|~>|<-|\\[&\\]|&",
+          "name": "keyword.operator.pointer.quxlang"
+        },
+        {
+          "match": "\\?\\?|!\\?|!!|!\\$",
+          "name": "keyword.operator.postfix.quxlang"
+        },
+        {
+          "match": "\\+\\+|--",
+          "name": "keyword.operator.increment.quxlang"
+        },
+        {
+          "match": "[<>]",
+          "name": "keyword.operator.comparison.quxlang"
+        },
+        {
+          "match": "#",
+          "name": "keyword.operator.template.quxlang"
+        },
+        {
+          "match": "[-+*/%^]",
+          "name": "keyword.operator.arithmetic.quxlang"
+        },
+        {
+          "match": "=|!",
+          "name": "keyword.operator.quxlang"
+        }
+      ]
+    },
+
+    "punctuation": {
+      "patterns": [
+        { "match": ";", "name": "punctuation.terminator.statement.quxlang" },
+        { "match": ",", "name": "punctuation.separator.comma.quxlang" },
+        { "match": ":", "name": "punctuation.separator.colon.quxlang" },
+        { "match": "\\.", "name": "punctuation.accessor.quxlang" },
+        { "match": "[{}]", "name": "punctuation.section.braces.quxlang" },
+        { "match": "[()]", "name": "punctuation.section.parens.quxlang" },
+        { "match": "[\\[\\]]", "name": "punctuation.section.brackets.quxlang" }
+      ]
+    },
+
+    "asm-procedure": {
+      "begin": "\\b(ASM_PROCEDURE|ASM_INLINE_FUNCTION)\\b",
+      "beginCaptures": { "1": { "name": "storage.type.quxlang" } },
+      "end": "(?<=\\})",
+      "name": "meta.asm-procedure.quxlang",
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#doc-block" },
+        {
+          "begin": "\\(",
+          "beginCaptures": { "0": { "name": "punctuation.section.parens.quxlang" } },
+          "end": "\\)",
+          "endCaptures": { "0": { "name": "punctuation.section.parens.quxlang" } },
+          "patterns": [{ "include": "#asm-signature" }]
+        },
+        {
+          "begin": "\\{",
+          "beginCaptures": { "0": { "name": "punctuation.section.braces.quxlang" } },
+          "end": "\\}",
+          "endCaptures": { "0": { "name": "punctuation.section.braces.quxlang" } },
+          "contentName": "meta.embedded.block.asm.quxlang",
+          "patterns": [{ "include": "#asm-body" }]
+        },
+        { "include": "#statements" }
+      ]
+    },
+
+    "asm-signature": {
+      "patterns": [
+        {
+          "begin": "\\(",
+          "end": "\\)",
+          "beginCaptures": { "0": { "name": "punctuation.section.parens.quxlang" } },
+          "endCaptures": { "0": { "name": "punctuation.section.parens.quxlang" } },
+          "patterns": [{ "include": "#asm-signature" }]
+        },
+        { "include": "#statements" }
+      ]
+    },
+
+    "asm-body": {
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#strings" },
+        {
+          "match": "^\\s*([A-Z][A-Z0-9_.]*)\\b(?!\\s*\\()",
+          "captures": { "1": { "name": "keyword.other.instruction.asm.quxlang" } }
+        },
+        {
+          "match": "\\b(OBJECT_REF|PROCEDURE_REF|EXTERNAL)\\b",
+          "name": "support.function.builtin.quxlang"
+        },
+        {
+          "match": "(@)([A-Z][A-Z0-9_]*)\\b",
+          "captures": {
+            "1": { "name": "punctuation.definition.relocation.asm.quxlang" },
+            "2": { "name": "storage.modifier.relocation.asm.quxlang" }
+          }
+        },
+        {
+          "match": "\\b(?:OFFSET|PTR|BYTE|WORD|DWORD|QWORD|XMMWORD)\\b",
+          "name": "storage.modifier.size.asm.quxlang"
+        },
+        {
+          "match": "#?-?\\b(?:0[xX][0-9A-Fa-f]+|[0-9]+(?:\\.[0-9]+)?)\\b",
+          "name": "constant.numeric.asm.quxlang"
+        },
+        {
+          "match": "\\b[A-Z][A-Z0-9_]*\\b",
+          "name": "variable.language.register.asm.quxlang"
+        },
+        { "include": "#scoped-names" },
+        { "include": "#calls" },
+        {
+          "comment": "Raw assembler symbols such as _quxlang_unwind_begin.",
+          "match": "\\b_[A-Za-z0-9_]*\\b",
+          "name": "entity.name.label.asm.quxlang"
+        },
+        { "include": "#identifiers" },
+        { "include": "#operators" },
+        { "include": "#punctuation" }
+      ]
+    }
+  }
+}
