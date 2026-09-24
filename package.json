@@ -2,7 +2,7 @@
   "name": "unofficial-quxlang",
   "displayName": "Quxlang (Unofficial)",
   "description": "Syntax highlighting for Quxlang.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "EdwinKofler",
   "license": "MIT",
   "icon": "icon.png",
